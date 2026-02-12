@@ -4,13 +4,6 @@ import os
 
 app = Flask(__name__)
 
-@app.route("/health")
-def health():
-    return {"status": "ASM backend running"}, 200
-
-if __name__=="__main__":
-    app.run(host="0.0.0.0", port=5000)
-
 def get_db_connection():
     conn = psycopg2.connect(
         host="db",
@@ -29,4 +22,10 @@ def db_test():
     cur.close()
     conn.close()
     return {"db_response": result[0]}
-    
+
+@app.route("/health")
+def health():
+    return {"status": "ASM backend running"}, 200
+
+if __name__=="__main__":
+    app.run(host="0.0.0.0", port=5000)
