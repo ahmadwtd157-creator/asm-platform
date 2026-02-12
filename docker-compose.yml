@@ -7,6 +7,11 @@ services:
     depends_on:
       - db
     restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_NAME: asm_database
+      DB_USER: asm_user
+      DB_PASSWORD: asm_password
 
   frontend:
     build: ./frontend
