@@ -4,6 +4,8 @@ services:
     container_name: asm-backend
     ports: 
       - "5000:5000"
+    drpends_on:
+      - db
     restart: unless-stopped
 
   frontend:
@@ -12,3 +14,18 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
+  
+  db:
+    image: postgres:15
+    container_name: asm-db
+    environment:
+      POSTGRES_USER: asm_user
+      POSTGRES_PASSWORD: asm_password
+      POSTGRES_DB: asm_database
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    
