@@ -5,7 +5,7 @@ import jwt
 import os
 from app.services.db_service import get_db_connection
 
-admin_bp = Blueprint('admin_bp',__name__)
+user_bp = Blueprint('user_bp',__name__)
 
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
 
@@ -43,10 +43,13 @@ def login():
     conn.close()
 
     if user and bcrypt.checkpw(password.encode('utf-8'),user[1].encode('utf-8')):
-        
+        payload = {"user_id": user[0], "role": user[2]}
+        token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+        return jsonify({"token":token})
+    else:
+        return jsonify({"message": "Invalid credentials"}),401
 
-@admin_bp.route("/admin/projects", methods=[DELETE])
+@user_bp.route("/profile", methods=["GET"])
 @token_required
-@roles_required('admin')
-def delete_projects(current_user, user_role):
-    return jsonify({"message": "Project deleted"})
+def profile(current_user, user_role):
+    return jsonify({"user_id":current_user, "role": user_role})

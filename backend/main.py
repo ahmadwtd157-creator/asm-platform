@@ -1,10 +1,10 @@
 from flask import Flask
-from app.api.admin_routes import admin_bp
+from app.api.user_routes import user_bp
 import psycopg2
 import os
 
 app = Flask(__name__)
-app.register_blueprint(admin_bp)
+app.register_blueprint(user_bp)
 
 def get_db_connection():
     conn = psycopg2.connect(
