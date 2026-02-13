@@ -10,3 +10,5 @@ def roles_required(*roles):
             return f(current_user, user_role, *args, **kwargs)
         return decorated
     return wrapper
+
+    
