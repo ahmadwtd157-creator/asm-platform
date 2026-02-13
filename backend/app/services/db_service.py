@@ -1,12 +1,11 @@
-from app.services.db_service import get_db_connection
+import psycopg2
+import os
 
-@app.route("/db-test")
-def db_test():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT 1;")
-    result = cur.fetchone()
-    cur.close()
-    conn.close()
-    return {"db_response": result[0]}
-    
+def get_db_connection():
+    conn = psycopg2.connect(
+        host=os.getenv("DB_HOST", "db"),
+        database=os.getenv("DB_NAME", "asm_database"),
+        user=os.getenv("DB_USER", "asm_user"),
+        password=os.getenv("DB_PASSWORD", "asm_password")
+    )
+    return conn

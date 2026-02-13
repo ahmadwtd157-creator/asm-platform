@@ -11,5 +11,17 @@ app.register_blueprint(user_bp)
 def health():
     return {"status": "ASM backend running"}, 200
 
+@app.route("/db-test")
+def db_test():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT 1;")
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+    return {"db_response": result[0]}
+
+
 if __name__=="__main__":
     app.run(host="0.0.0.0", port=5000)
+    
