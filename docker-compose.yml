@@ -9,7 +9,7 @@ services:
       DB_NAME: asm_database
       DB_USER: asm_user
       DB_PASSWORD: asm_password
-      depends_on:
+    depends_on:
       - db
     restart: unless-stopped
  

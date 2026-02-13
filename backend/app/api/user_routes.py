@@ -5,7 +5,7 @@ import jwt
 import os
 from app.services.db_service import get_db_connection
 
-user_bp = Blueprint('user_bp',__name__)
+user_bp = Blueprint('user_bp',__name__, url_prefix="/usre")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
 
@@ -15,7 +15,7 @@ def register():
     email = data.get("email")
     password = data.get("password")
 
-    password_hash=bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
     conn = get_db_connection()
     cur = conn.cursor()
@@ -37,7 +37,7 @@ def login():
 
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT id, password_hash, role FROM users WHERE email=%s;"), (email())
+    cur.execute("SELECT id, password_hash, role FROM users WHERE email=%s;",(email,))
     user = cur.fetchone()
     cur.close()
     conn.close()
