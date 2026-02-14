@@ -4,10 +4,9 @@ import bcrypt
 import jwt
 import os
 from app.services.db_service import get_db_connection
+from app.core.config import JWT_SECRET
 
-user_bp = Blueprint('user_bp',__name__, url_prefix="/usre")
-
-SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
+user_bp = Blueprint("user",__name__)
 
 @user_bp.route("/register", methods=["POST"])
 def register():
@@ -20,8 +19,8 @@ def register():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute(
-        "INSERT INTO users (email, password_hash) VALUES (%s,%s) RETURNING id;",
-        (email,password_hash)
+        "INSERT INTO users (email, password_hash, role) VALUES (%s,%s,%s) RETURNING id;",
+        (email,password_hash, "viewer")
     )
     user_id = cur.fetchone()[0]
     conn.commit()
@@ -42,9 +41,12 @@ def login():
     cur.close()
     conn.close()
 
-    if user and bcrypt.checkpw(password.encode('utf-8'),user[1].encode('utf-8')):
-        payload = {"user_id": user[0], "role": user[2]}
-        token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+    if user and bcrypt.checkpw(password.encode('utf-8'), user[1].encode('utf-8')):
+        payload = {
+            "user_id": user[0],
+            "role": user[2]
+        }
+        token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
         return jsonify({"token":token})
     else:
         return jsonify({"message": "Invalid credentials"}),401

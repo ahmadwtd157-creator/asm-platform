@@ -5,9 +5,9 @@ import psycopg2
 import os
 
 app = Flask(__name__)
-app.register_blueprint(user_bp)
+app.register_blueprint(user_bp, url_prefix="/api")
 
-@app.route("/health")
+@app.route("/")
 def health():
     return {"status": "ASM backend running"}, 200
 
