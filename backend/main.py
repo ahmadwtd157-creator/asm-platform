@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask , request , redirect
 from app.services.db_service import get_db_connection
 from app.api.user_routes import user_bp
 import psycopg2
@@ -20,7 +20,7 @@ def db_test():
     cur.close()
     conn.close()
     return {"db_response": result[0]}
-
+ 
 
 if __name__=="__main__":
     app.run(host="0.0.0.0", port=5000)

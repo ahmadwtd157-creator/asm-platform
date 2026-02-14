@@ -2,15 +2,30 @@ CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    role VARCHAR(50) NOT NULL DEFAULT 'viewer'
+    role VARCHAR(50) NOT NULL DEFAULT 'viewer',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-اظن ان الامور كلها تمام 
-admiral@admiral-vivo:~$ curl -X POST http://172.18.0.4:5000/api/register -H "Content-Type: application/json" -d '{"email":"admin@test.com","password":"123456"}'
-{"message":"User created with id 1"}
+CREATE TABLE IF NOT EXISTS assets (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    domain VARCHAR(255),
+    ip_address VARCHAR(45),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-الان مارايك ان نكمل بناء المشروع انا لا اريد حاليا توسيعه كثيرا فقط الالتزام في المطلوب لانه مشروع في كورس 
-للتأكيد المطلوب في المرفق
+CREATE TABLE IF NOT EXISTS scans (
+    id SERIAL PRIMARY KEY,
+    asset_id INTEGER REFERENCES assets(id) ON DELETE CASCADE,
+    status VARCHAR(50) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-ما الخطوات القادمة؟؟ بشكل احترافي وبدون توسع مع الالترام بالمطلوب
+CREATE TABLE IF NOT EXISTS scan_results (
+    id SERIAL PRIMARY KEY,
+    scan_id INTEGER REFERENCES scans(id) ON DELETE CASCADE,
+    port INTEGER,
+    service VARCHAR(100),
+    is_open BOOLEAN,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
