@@ -16,8 +16,15 @@ EXPOSE 5000
 
 CMD ["python", "main.py"]
 
-RUN apt update && apt install -y wget unzip
-RUN wget https://github.com/projectdiscovery/subfinder/releases/download/v2.12.0/subfinder_2.12.0_linux_amd64.zip \
-    && unzip subfinder_2.12.0_linux_amd64.zip \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends wget unzip ca-certificates \
+    \
+    && wget https://github.com/projectdiscovery/subfinder/releases/download/v2.12.0/subfinder_2.12.0_linux_amd64.zip \
+    && unzip -o subfinder_2.12.0_linux_amd64.zip \
     && mv subfinder /usr/local/bin/ \
-    && chmod +x /usr/local/bin/subfinder
+    && chmod +x /usr/local/bin/subfinder \
+    \
+    && wget https://github.com/projectdiscovery/dnsx/releases/download/v1.2.3/dnsx_1.2.3_linux_amd64.zip \
+    && unzip -o dnsx_1.2.3_linux_amd64.zip \
+    && mv dnsx /usr/local/bin/ \
+    && chmod +x /usr/local/bin/dnsx
