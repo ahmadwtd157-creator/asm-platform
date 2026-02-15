@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from app.core.auth import token_required
-from app.services.db_service import discover_subdomains
-from app.services.scan_service import asset_belongs_to_user
+from app.services.discovery_service import discover_subdomains
+#from app.services.scan_service import asset_belongs_to_user
 
 discovery_bp = Blueprint("discovery", __name__)
 
