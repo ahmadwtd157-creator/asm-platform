@@ -19,6 +19,7 @@ CMD ["python", "main.py"]
 RUN apt-get update \
     && apt-get install -y --no-install-recommends wget unzip ca-certificates \
     && apt-get install -y golang \
+    && apt-get install -y nmap \
     \
     && wget https://github.com/projectdiscovery/subfinder/releases/download/v2.12.0/subfinder_2.12.0_linux_amd64.zip \
     && unzip -o subfinder_2.12.0_linux_amd64.zip \
@@ -28,9 +29,4 @@ RUN apt-get update \
     && wget https://github.com/projectdiscovery/dnsx/releases/download/v1.2.3/dnsx_1.2.3_linux_amd64.zip \
     && unzip -o dnsx_1.2.3_linux_amd64.zip \
     && mv dnsx /usr/local/bin/ \
-    && chmod +x /usr/local/bin/dnsx \
-    \
-    && wget https://github.com/projectdiscovery/httpx/releases/download/v1.8.1/httpx_1.8.1_linux_amd64.zip \
-    && unzip -o httpx_1.8.1_linux_amd64.zip \
-    && mv httpx /usr/local/bin/ \
-    && chmod +x /usr/local/bin/httpx
+    && chmod +x /usr/local/bin/dnsx
