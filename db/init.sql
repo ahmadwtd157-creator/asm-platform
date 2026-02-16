@@ -27,6 +27,9 @@ CREATE TABLE IF NOT EXISTS scan_results (
     port INTEGER,
     service VARCHAR(100),
     is_open BOOLEAN,
+    asset_type VARCHAR(100),
+    category VARCHAR(100),
+    criticality VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
