@@ -1,10 +1,10 @@
 from app.services.db_service import get_db_connection
 from app.engines.discovery_engine import run_subfinder
 
-def discover_subdomains(asset_id, domain):
+def discover_subdomains(asset_id: int, domain: str):
     subdomains = run_subfinder(domain)
     conn = get_db_connection()
-    cur = conn.cursor
+    cur = conn.cursor()
 
     inserted = []
 
@@ -14,7 +14,7 @@ def discover_subdomains(asset_id, domain):
                 """
                 INSERT INTO subdomains (asset_id, subdomain)
                 VALUES (%s, %s)
-                ON CONFLICT DO NOTHING
+                ON CONFLICT (asset_id, subdomain) DO NOTHING
                 RETURNING id;
                 """,
                 (asset_id, sub)

@@ -1,3 +1,10 @@
+from flask import Blueprint, request, jsonfy
+from app.core.auth import token_required
+from app.services.asset_service import create_asset
+
+asset_bp = Blueprint("asset", __name__)
+
+
 @asset_bp.route("/assets",methods=["POST"])
 @token_required
 def add_asset(current_user,usre_role):

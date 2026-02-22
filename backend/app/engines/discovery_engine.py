@@ -1,7 +1,7 @@
 import subprocess
 import json
 
-def run_subfinder(domain):
+def run_subfinder(domain: str):
     command = [
         "subfinder",
         "-d",
@@ -13,7 +13,8 @@ def run_subfinder(domain):
     result = subprocess.run(
         command,
         capture_output=True,
-        text=True
+        text=True,
+        timeout=120
     )
     
     subdomains = []
@@ -21,7 +22,9 @@ def run_subfinder(domain):
     for line in result.stdout.splitlines():
         try:
             data = josn.loads(line)
-            subdomains.append(data.get("host"))
+            host = data.get("host")
+            if host:
+                subdomains.append("host")
         except Exception:
             continue
     return list(set(subdomains))

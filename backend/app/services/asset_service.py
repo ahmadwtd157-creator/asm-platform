@@ -2,7 +2,7 @@ from app.services.db_service import get_db_connection
 
 def create_asset(user_id, domin, ip_address):
     conn = get_db_connection
-    cur = cursor()
+    cur = conn.cursor()
     cur.execute(
         """
         INSERT INTO assets (user_id, domain, ip_address)

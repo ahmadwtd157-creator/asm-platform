@@ -10,6 +10,7 @@ app = Flask(__name__)
 print("Starting scheduler...........")
 start_scheduler()
 app.register_blueprint(user_bp, url_prefix="/api")
+app.register_blueprint(asset_bp, url_prefix="/api")
 app.register_blueprint(discovery_bp, url_prefix="/api")
 
 @app.route("/")

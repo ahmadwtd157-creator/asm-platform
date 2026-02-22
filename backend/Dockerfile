@@ -1,20 +1,12 @@
 FROM python:3.11-slim-bookworm
 
-RUN useradd -m asmuser
-
 WORKDIR /app
 
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
 
-USER root
-
-EXPOSE 5000
-
-CMD ["python", "main.py"]
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends wget unzip ca-certificates \
@@ -30,3 +22,9 @@ RUN apt-get update \
     && unzip -o dnsx_1.2.3_linux_amd64.zip \
     && mv dnsx /usr/local/bin/ \
     && chmod +x /usr/local/bin/dnsx
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["python", "main.py"]

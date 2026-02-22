@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS scan_results (
     scan_id INTEGER REFERENCES scans(id) ON DELETE CASCADE,
     port INTEGER,
     service VARCHAR(100),
+    banner TEXT,
     is_open BOOLEAN,
     asset_type VARCHAR(100),
     category VARCHAR(100),

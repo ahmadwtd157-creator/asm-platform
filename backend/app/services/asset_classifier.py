@@ -28,11 +28,11 @@ class AssetClassifier:
     }
 
     @classmethod
-    def classfy(cls, port: int, service: str = "",banner: str=""):
+    def classfy(cls, port: int,banner: str=""):
         if port in cls.PORT_RULES:
             return cls.PORT_RULES[port]
 
-        banner_lower = (banner or "").lower
+        banner_lower = (banner or "").lower()
         for keyword, value in cls.BANNER_KEYWORDS.items():
             if keyword in banner_lower:
                 return value

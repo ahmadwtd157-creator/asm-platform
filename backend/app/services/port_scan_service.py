@@ -1,6 +1,5 @@
 import subprocess
 import xml.etree.ElementTree as ET
-import json
 
 class PortScanService:
 
@@ -20,7 +19,8 @@ class PortScanService:
             command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            text=True
+            text=True,
+            timeout=300
         )
 
         return PortScanService.parse_nmap_xml(result.stdout)
@@ -34,8 +34,8 @@ class PortScanService:
         for host in root.findall("host"):
             for port in host.findall(".//port"):
                 state = port.find("state")
-                if state is not None and state.attrib.get("state") == "open":
 
+                if state is not None and state.attrib.get("state") == "open":
                     port_id = int(port.attrib.get("portid"))
                     service_elem = port.find("service")
 
@@ -46,7 +46,6 @@ class PortScanService:
                         service_name = service_elem.attrib.get("name","")
                         product = service_elem.attrib.get("product","")
                         version =  service_elem.attrib.get("version","")      
-
                         banner = f"{port} {version}".strip()
 
                     open_ports.append({

@@ -1,21 +1,18 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from app.services.monitoring_service import MonitoringService
-from datetime import datetime
 import atexit
 
 scheduler = BackgroundScheduler()
 
 def  scheduled_job():
-     print("====SCHEDULER RUN ====", datetime.utcnow(), flush=True)
+     MonitoringService.run_daily_scan()
 
 def start_scheduler():
-    print("Registering...", flush=True)
-
     scheduler.add_job(
         scheduled_job,
         trigger="interval",
-        seconds=30,
-        id="Test_job",
+        seconds=60,
+        id="monitoring_job",
         replace_existing=True
     )
     scheduler.start()        
