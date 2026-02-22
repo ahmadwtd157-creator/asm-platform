@@ -2,10 +2,13 @@ from flask import Flask , request , redirect
 from app.services.db_service import get_db_connection
 from app.api.user_routes import user_bp
 from app.api.discovery_routes import discovery_bp
+from app.services.scheduler_service import start_scheduler
 import psycopg2
 import os
 
 app = Flask(__name__)
+print("Starting scheduler...........")
+start_scheduler()
 app.register_blueprint(user_bp, url_prefix="/api")
 app.register_blueprint(discovery_bp, url_prefix="/api")
 
