@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonfy
+from flask import Blueprint, request, jsonify
 from app.core.auth import token_required
 from app.services.asset_service import create_asset
 
@@ -14,4 +14,4 @@ def add_asset(current_user,usre_role):
 
     asset_id = create_asset(current_user, domain, ip_address)
 
-    return jsonfy({"asset_id": asset_id}),201
+    return jsonify({"asset_id": asset_id}),201

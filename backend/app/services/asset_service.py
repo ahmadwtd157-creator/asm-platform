@@ -12,8 +12,8 @@ def create_asset(user_id, domin, ip_address):
     ,
     (user_id,domin,ip_address)
     )
-asset_id = cur.fetchone()[0]
-conn.commit()
-cur.close()
-conn.close()
-return asset_id
+    asset_id = cur.fetchone()[0]
+    conn.commit()
+    cur.close()
+    conn.close()
+    return asset_id

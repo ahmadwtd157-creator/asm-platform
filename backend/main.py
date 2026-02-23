@@ -1,6 +1,7 @@
 from flask import Flask , request , redirect
 from app.services.db_service import get_db_connection
 from app.api.user_routes import user_bp
+from routes.asset_routes import asset_bp
 from app.api.discovery_routes import discovery_bp
 from app.services.scheduler_service import start_scheduler
 import psycopg2

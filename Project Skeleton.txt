@@ -1,14 +1,16 @@
 asm-platform/
 ├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   ├── core/
+│   ├── app/__init__.py, database.py
+│   │   ├── api/discovery_routes.py, user_routes.py
+│   │   ├── core/auth.py, config.py
 │   │   │   ├── discovery/
 │   │   │   ├── scanning/
 │   │   │   ├── diff_engine/
 │   │   │   ├── risk_scoring/
+│   │   ├── engines/discovery_engine.py
 │   │   ├── models/
-│   │   └── services/
+│   │   └── services/asset_classifier.py, asset_service.py, db_service.py, discovery_service.py, dns_service.py, monitoring_service.py, port_scan_service.py, scheduler_service.py,
+│   ├── routes/asset_routes.py
 │   ├── main.py
 │   ├── requirements.txt
 │   └── Dockerfile
@@ -20,3 +22,4 @@ asm-platform/
 │
 ├── docker-compose.yml
 └── docs/
+└── db/init.sql
