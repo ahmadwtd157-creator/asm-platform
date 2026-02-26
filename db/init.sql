@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS scans (
     id SERIAL PRIMARY KEY,
     asset_id INTEGER REFERENCES assets(id) ON DELETE CASCADE,
     status VARCHAR(50) DEFAULT 'pending',
+    scan_date TIMESTAMP,
+    risk_score INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -31,6 +33,7 @@ CREATE TABLE IF NOT EXISTS scan_results (
     asset_type VARCHAR(100),
     category VARCHAR(100),
     criticality VARCHAR(50),
+    status TEXT
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

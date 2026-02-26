@@ -16,12 +16,7 @@ RUN apt-get update \
     && wget https://github.com/projectdiscovery/subfinder/releases/download/v2.12.0/subfinder_2.12.0_linux_amd64.zip \
     && unzip -o subfinder_2.12.0_linux_amd64.zip \
     && mv subfinder /usr/local/bin/ \
-    && chmod +x /usr/local/bin/subfinder \
-    \
-    && wget https://github.com/projectdiscovery/dnsx/releases/download/v1.2.3/dnsx_1.2.3_linux_amd64.zip \
-    && unzip -o dnsx_1.2.3_linux_amd64.zip \
-    && mv dnsx /usr/local/bin/ \
-    && chmod +x /usr/local/bin/dnsx
+    && chmod +x /usr/local/bin/subfinder
 
 COPY . .
 
