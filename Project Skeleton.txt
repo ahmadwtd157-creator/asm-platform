@@ -15,11 +15,33 @@ asm-platform/
 │   ├── requirements.txt
 │   └── Dockerfile
 │
-├── frontend/
-│   ├── src/
-│   ├── Dockerfile
-│   └── package.json
-│
 ├── docker-compose.yml
 └── docs/
 └── db/init.sql
+
+
+
+frontend/
+│
+├── index.html              # Login
+├── dashboard.html          # Executive View
+│
+├── pages/
+│   ├── assets.html
+│   ├── monitoring.html
+│   ├── risk.html
+│   └── reports.html
+│
+├── js/
+│   ├── config.js
+│   ├── auth.js
+│   ├── api.js
+│   ├── dashboard.js
+│   ├── assets.js
+│   ├── monitoring.js
+│   └── risk.js
+│
+└── assets/
+    ├── css/
+    ├── js/
+    └── vendor/   (AdminLTE files)
