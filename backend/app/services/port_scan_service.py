@@ -26,7 +26,7 @@ class PortScanService:
         return PortScanService.parse_nmap_xml(result.stdout)
 
     @staticmethod
-    def parse_nmap_xml(aml_output: str):
+    def parse_nmap_xml(xml_output: str):
         root = ET.fromstring(xml_output)
 
         open_ports =[]
@@ -46,7 +46,7 @@ class PortScanService:
                         service_name = service_elem.attrib.get("name","")
                         product = service_elem.attrib.get("product","")
                         version =  service_elem.attrib.get("version","")      
-                        banner = f"{port} {version}".strip()
+                        banner = f"{product} {version}".strip()
 
                     open_ports.append({
                         "port": port_id,

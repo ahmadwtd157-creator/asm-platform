@@ -7,7 +7,7 @@ asset_bp = Blueprint("asset", __name__)
 
 @asset_bp.route("/assets",methods=["POST"])
 @token_required
-def add_asset(current_user,usre_role):
+def add_asset(current_user,user_role):
     data=request.get_json()
     domain=data.get("domain")
     ip_address = data.get("ip_address")

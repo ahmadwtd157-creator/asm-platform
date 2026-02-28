@@ -38,7 +38,7 @@ class MonitoringService:
         new_ports = PortScanService.scan(ip)
         
         cursor.execute("""
-        SELECT port FROM scans_results
+        SELECT port FROM scan_results
         WHERE scan_id IN (
             SELECT id FROM scans
             WHERE asset_id = %s

@@ -33,10 +33,4 @@ def db_test():
 
 if __name__=="__main__":
     app.run(host="0.0.0.0", port=5000)
-    
 
-
-    admiral@admiral-vivo:~$ curl -X POST http://localhost:5000/api/login -H "Content-Type: application/json" -d '{"email":"YOUR_EMAIL","password":"YOUR_PASSWORD"}'
-{"message":"Invalid credentials"}
-
-asm-backend   | 172.18.0.1 - - [27/Feb/2026 19:31:18] "POST /api/login HTTP/1.1" 401 -

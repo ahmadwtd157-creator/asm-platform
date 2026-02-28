@@ -21,10 +21,10 @@ def run_subfinder(domain: str):
 
     for line in result.stdout.splitlines():
         try:
-            data = josn.loads(line)
+            data = json.loads(line)
             host = data.get("host")
             if host:
-                subdomains.append("host")
+                subdomains.append(host)
         except Exception:
             continue
     return list(set(subdomains))
