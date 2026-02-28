@@ -10,7 +10,7 @@ def create_asset(user_id, domain, ip_address):
         RETURNING id;
         """
     ,
-    (user_id,domin,ip_address)
+    (user_id,domain,ip_address)
     )
     asset_id = cur.fetchone()[0]
     conn.commit()

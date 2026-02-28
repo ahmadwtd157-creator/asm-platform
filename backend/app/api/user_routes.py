@@ -6,6 +6,7 @@ import os
 from app.services.db_service import get_db_connection
 from app.core.config import JWT_SECRET
 
+
 user_bp = Blueprint("user",__name__)
 
 @user_bp.route("/register", methods=["POST"])
