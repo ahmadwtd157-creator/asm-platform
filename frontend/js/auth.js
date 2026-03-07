@@ -1,10 +1,10 @@
-const API = "http://localhost:5000";
+const API = "http://localhost:5000/api";
 
 async function login() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    const res = await fetch(`${API}/auth/login`, {
+    const res = await fetch(`${API}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })

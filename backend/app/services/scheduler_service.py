@@ -11,7 +11,7 @@ def start_scheduler():
     scheduler.add_job(
         scheduled_job,
         trigger="interval",
-        seconds=60,
+        minutes=30,
         id="monitoring_job",
         replace_existing=True
     )

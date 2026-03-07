@@ -33,6 +33,7 @@ class DashboardService:
         low = medium = high = 0
 
         for _, _, risk in rows:
+            risk = risk or 0
             if risk < 30:
                 low += 1
             elif risk < 70:

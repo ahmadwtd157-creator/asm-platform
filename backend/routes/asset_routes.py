@@ -116,9 +116,11 @@ def get_asset_results(current_user, user_role, asset_id):
         SELECT sr.port, sr.service, sr.banner, sr.is_open, s.risk_score, s.created_at
         FROM scan_results sr
         JOIN scans s ON sr.scan_id = s.id
-        WHERE s.asset_id=%s
+        JOIN assets a ON a.id = s.asset_id
+        WHERE s.asset_id=%s AND a.user_id=%s
         ORDER BY s.created_at DESC;
-    """, (asset_id,))
+        
+    """, (asset_id,current_user))
 
     rows = cur.fetchall()
 
@@ -173,7 +175,7 @@ def trigger_scan(current_user, user_role, asset_id):
 
 @asset_bp.route("/report/executive", methods=["GET"])
 @token_required
-def executive_report(current_user, role):
+def executive_report(current_user, user_role):
     file_path = ReportingService.generate_executive_report()
 
     return send_file(

@@ -19,7 +19,7 @@ class MonitoringService:
         connection.commit()
         cursor.close()
         connection.close()
-        print("==== SCHDULER RUN ====", datetime.utcnow(), flush=True)
+        print("==== SCHEDULER RUN ====", datetime.utcnow(), flush=True)
         
     @staticmethod
     def scan_and_compare(asset_id, ip,connection):
@@ -56,7 +56,7 @@ class MonitoringService:
         closed_ports = old_ports - new_ports_set
 
         print(f"[Asset {ip}] New Ports:{new_open_ports}")
-        print(f"[Asset{ip}] Closed Ports:{closed_ports}")
+        print(f"[Asset {ip}] Closed Ports:{closed_ports}")
 
         for port_data in new_ports:
                 cursor.execute("""
@@ -64,9 +64,10 @@ class MonitoringService:
                 scan_id,
                 port,
                 service,
+                banner,
                 is_open
                 )
-                VALUES (%s,%s,%s,%s);
+                VALUES (%s,%s,%s,%s,%s);
                 """, (scan_id, port_data["port"],port_data["service"],port_data["banner"], True)
                 )
 

@@ -5,6 +5,7 @@ import jwt
 import os
 from app.services.db_service import get_db_connection
 from app.core.config import JWT_SECRET
+import psycopg2
 
 
 user_bp = Blueprint("user",__name__)
@@ -19,15 +20,19 @@ def register():
 
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO users (email, password_hash, role) VALUES (%s,%s,%s) RETURNING id;",
-        (email,password_hash, "viewer")
+    try:
+        cur.execute(
+            "INSERT INTO users (email,password_hash,role) VALUES (%s,%s,%s) RETURNING id;",
+            (email,password_hash,"viewer")
     )
-    user_id = cur.fetchone()[0]
-    conn.commit()
-    cur.close()
-    conn.close()
-    return jsonify({"message": f"User created with id {user_id}"}), 201
+    except psycopg2.errors.UniqueViolation:
+        conn.rollback()
+        return jsonify({"message":"Email already exists"}),400
+        user_id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"message": f"User created with id {user_id}"}), 201
 
 @user_bp.route("/login",methods=["POST"])
 def login():

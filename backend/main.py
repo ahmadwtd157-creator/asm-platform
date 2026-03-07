@@ -3,18 +3,15 @@ from app.services.db_service import get_db_connection
 from app.api.user_routes import user_bp
 from routes.asset_routes import asset_bp
 from app.api.discovery_routes import discovery_bp
-from app.services.scheduler_service import start_scheduler
 from routes.dashboard_routes import dashboard_bp
 import psycopg2
 import os
 
 app = Flask(__name__)
-print("Starting scheduler...........")
-start_scheduler()
 app.register_blueprint(user_bp, url_prefix="/api")
 app.register_blueprint(asset_bp, url_prefix="/api")
 app.register_blueprint(discovery_bp, url_prefix="/api")
-app.register_blueprint(dashboard_bp)
+app.register_blueprint(dashboard_bp, url_prefix="/api")
 
 @app.route("/")
 def health():
