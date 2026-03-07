@@ -8,18 +8,23 @@ from app.services.reporting_service import ReportingService
 asset_bp = Blueprint("asset", __name__)
 
 
-
 @asset_bp.route("/assets", methods=["POST"])
 @token_required
 def add_asset(current_user, user_role):
     data = request.get_json()
+
+    if not data:
+        return jsonify({"message": "Invalid request body"}), 400
+
     domain = data.get("domain")
     ip_address = data.get("ip_address")
+
+    if not domain and not ip_address:
+        return jsonify({"message": "domain or ip_address required"}), 400
 
     asset_id = create_asset(current_user, domain, ip_address)
 
     return jsonify({"asset_id": asset_id}), 201
-
 
 
 @asset_bp.route("/assets", methods=["GET"])
@@ -32,10 +37,11 @@ def get_assets(current_user, user_role):
         SELECT id, domain, ip_address, created_at
         FROM assets
         WHERE user_id=%s
-        ORDER BY created_at DESC;
+        ORDER BY created_at DESC
     """, (current_user,))
 
     rows = cur.fetchall()
+
     cur.close()
     conn.close()
 
@@ -51,7 +57,6 @@ def get_assets(current_user, user_role):
     return jsonify(assets), 200
 
 
-
 @asset_bp.route("/assets/<int:asset_id>", methods=["GET"])
 @token_required
 def get_asset(current_user, user_role, asset_id):
@@ -61,7 +66,7 @@ def get_asset(current_user, user_role, asset_id):
     cur.execute("""
         SELECT id, domain, ip_address, created_at
         FROM assets
-        WHERE id=%s AND user_id=%s;
+        WHERE id=%s AND user_id=%s
     """, (asset_id, current_user))
 
     row = cur.fetchone()
@@ -80,7 +85,6 @@ def get_asset(current_user, user_role, asset_id):
     }), 200
 
 
-
 @asset_bp.route("/assets/<int:asset_id>", methods=["DELETE"])
 @token_required
 def delete_asset(current_user, user_role, asset_id):
@@ -90,7 +94,7 @@ def delete_asset(current_user, user_role, asset_id):
     cur.execute("""
         DELETE FROM assets
         WHERE id=%s AND user_id=%s
-        RETURNING id;
+        RETURNING id
     """, (asset_id, current_user))
 
     deleted = cur.fetchone()
@@ -105,22 +109,56 @@ def delete_asset(current_user, user_role, asset_id):
     return jsonify({"message": "Asset deleted"}), 200
 
 
-
+# -----------------------------
+# FIXED RESULTS ENDPOINT
+# -----------------------------
 @asset_bp.route("/assets/<int:asset_id>/results", methods=["GET"])
 @token_required
 def get_asset_results(current_user, user_role, asset_id):
+
     conn = get_db_connection()
     cur = conn.cursor()
 
+    # تحقق من ملكية الـ asset
     cur.execute("""
-        SELECT sr.port, sr.service, sr.banner, sr.is_open, s.risk_score, s.created_at
-        FROM scan_results sr
-        JOIN scans s ON sr.scan_id = s.id
-        JOIN assets a ON a.id = s.asset_id
-        WHERE s.asset_id=%s AND a.user_id=%s
-        ORDER BY s.created_at DESC;
-        
-    """, (asset_id,current_user))
+        SELECT id FROM assets
+        WHERE id=%s AND user_id=%s
+    """, (asset_id, current_user))
+
+    asset = cur.fetchone()
+
+    if not asset:
+        cur.close()
+        conn.close()
+        return jsonify({"message": "Asset not found"}), 404
+
+    # احضار اخر scan فقط
+    cur.execute("""
+        SELECT id, risk_score, created_at
+        FROM scans
+        WHERE asset_id=%s
+        ORDER BY created_at DESC
+        LIMIT 1
+    """, (asset_id,))
+
+    scan = cur.fetchone()
+
+    if not scan:
+        cur.close()
+        conn.close()
+        return jsonify([]), 200
+
+    scan_id = scan[0]
+    risk_score = scan[1]
+    scan_date = scan[2]
+
+    # احضار المنافذ المفتوحة فقط
+    cur.execute("""
+        SELECT port, service, banner
+        FROM scan_results
+        WHERE scan_id=%s AND is_open=TRUE
+        ORDER BY port
+    """, (scan_id,))
 
     rows = cur.fetchall()
 
@@ -128,30 +166,31 @@ def get_asset_results(current_user, user_role, asset_id):
     conn.close()
 
     results = []
+
     for row in rows:
         results.append({
             "port": row[0],
             "service": row[1],
             "banner": row[2],
-            "is_open": row[3],
-            "risk_score": row[4],
-            "scan_date": row[5]
+            "is_open": True,
+            "risk_score": risk_score,
+            "scan_date": scan_date
         })
 
     return jsonify(results), 200
 
 
-
 @asset_bp.route("/assets/<int:asset_id>/scan", methods=["POST"])
 @token_required
 def trigger_scan(current_user, user_role, asset_id):
+
     conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute("""
         SELECT ip_address
         FROM assets
-        WHERE id=%s AND user_id=%s;
+        WHERE id=%s AND user_id=%s
     """, (asset_id, current_user))
 
     row = cur.fetchone()
@@ -166,16 +205,17 @@ def trigger_scan(current_user, user_role, asset_id):
     MonitoringService.scan_and_compare(asset_id, ip_address, conn)
 
     conn.commit()
+
     cur.close()
     conn.close()
 
     return jsonify({"message": "Scan completed"}), 200
 
 
-
 @asset_bp.route("/report/executive", methods=["GET"])
 @token_required
 def executive_report(current_user, user_role):
+
     file_path = ReportingService.generate_executive_report()
 
     return send_file(
