@@ -1,7 +1,5 @@
-FROM node:20-alpine
+FROM nginx:alpine
 
-WORKDIR /app
+COPY . /usr/share/nginx/html
 
-COPY . .
-
-CMD ["sh","-c","echo Frontend container raedy && sleep infinity"]
+EXPOSE 80

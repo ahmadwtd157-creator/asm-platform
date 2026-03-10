@@ -1,46 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <title>ASM Login</title>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>ASM Platform Login</title>
+
+<link rel="stylesheet" href="assets/vendor/adminlte/plugins/fontawesome-free/css/all.min.css">
+<link rel="stylesheet" href="assets/vendor/adminlte/dist/css/adminlte.min.css">
+
 </head>
-<body>
 
-<h2>Login</h2>
+<body class="hold-transition login-page dark-mode">
 
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
+<div class="login-box">
+
+<div class="login-logo">
+<b>ASM</b> Platform
+</div>
+
+<div class="card">
+
+<div class="card-body login-card-body">
+
+<p class="login-box-msg">Sign in to start your session</p>
+
+<div class="input-group mb-3">
+<input id="email" type="email" class="form-control" placeholder="Email">
+<div class="input-group-append">
+<div class="input-group-text">
+<span class="fas fa-envelope"></span>
+</div>
+</div>
+</div>
+
+<div class="input-group mb-3">
+<input id="password" type="password" class="form-control" placeholder="Password">
+<div class="input-group-append">
+<div class="input-group-text">
+<span class="fas fa-lock"></span>
+</div>
+</div>
+</div>
+
+<div class="row">
+<div class="col-12">
+<button onclick="login()" class="btn btn-primary btn-block">
+Login
+</button>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="assets/vendor/adminlte/plugins/jquery/jquery.min.js"></script>
+<script src="assets/vendor/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/adminlte/dist/js/adminlte.min.js"></script>
 
 <script src="js/config.js"></script>
 <script src="js/auth.js"></script>
-
-<script>
-async function login() {
-
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-const response = await fetch(API_BASE + "/api/login", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify({email, password})
-});
-
-const data = await response.json();
-
-if(response.ok){
-localStorage.setItem("token", data.token);
-window.location.href = "dashboard.html";
-}else{
-alert("Login failed");
-}
-
-}
-</script>
-
 
 </body>
 </html>

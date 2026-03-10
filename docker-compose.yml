@@ -15,12 +15,11 @@ services:
       - db
     restart: unless-stopped
  
-
   frontend:
     build: ./frontend
     container_name: asm-frontend
     ports:
-      - "3000:3000"
+      - "3000:80"
     restart: unless-stopped
   
   db:

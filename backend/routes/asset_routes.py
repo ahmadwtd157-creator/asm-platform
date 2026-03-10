@@ -110,7 +110,6 @@ def delete_asset(current_user, user_role, asset_id):
 
     return jsonify({"message": "Asset deleted"}), 200
 
-
 # -----------------------------
 # FIXED RESULTS ENDPOINT
 # -----------------------------

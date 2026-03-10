@@ -1,16 +1,32 @@
-const API = "http://localhost:5000/api";
-const token = localStorage.getItem("token");
+requireAuth();
 
-async function loadDashboard() {
-    const res = await fetch(`${API}/dashboard/summary`, {
-        headers: { "Authorization": `Bearer ${token}` }
-    });
+async function loadDashboard(){
 
-    const data = await res.json();
+try{
 
-    document.getElementById("low").innerText = data.low_risk;
-    document.getElementById("medium").innerText = data.medium_risk;
-    document.getElementById("high").innerText = data.high_risk;
+const res = await fetch(`${API_BASE_URL}/dashboard/summary`,{
+headers:getHeaders()
+});
+
+const data = await res.json();
+
+document.getElementById("low").innerText = data.low || 0;
+document.getElementById("medium").innerText = data.medium || 0;
+document.getElementById("high").innerText = data.high || 0;
+
+}
+catch(err){
+
+console.error("Dashboard error",err);
+
 }
 
+}
+
+window.onload = function(){
+
 loadDashboard();
+
+setInterval(loadDashboard,5000);
+
+}

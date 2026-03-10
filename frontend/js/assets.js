@@ -1,130 +1,136 @@
-const API = "http://localhost:5000/api";
-const token = localStorage.getItem("token");
-
-function authHeader() {
-return {
-"Authorization": `Bearer ${token}`,
-"Content-Type": "application/json"
-};
-}
+requireAuth();
 
 async function loadAssets() {
 
+    try {
 
-    const res = await fetch(`${API}/assets`, {
-        headers: authHeader()
-    });
+        const res = await fetch(`${API_BASE_URL}/assets`, {
+            headers: getHeaders()
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    const table = document.getElementById("assetsTable");
+        const table = document.getElementById("assetsTable");
 
-    table.innerHTML = "";
+        if (!table) {
+            console.error("assetsTable element not found");
+            return;
+        }
 
-    data.forEach(asset => {
+        table.innerHTML = "";
 
-        table.innerHTML += `
-        <tr>
+        data.forEach(asset => {
+
+            table.innerHTML += `
+            <tr>
+
             <td>${asset.id}</td>
+
             <td>${asset.domain || ""}</td>
+
             <td>${asset.ip_address || ""}</td>
 
             <td>
 
-                <button class="btn btn-sm btn-warning"
-                onclick="scan(${asset.id})">
-                Scan
-                </button>
+            <a href="asset_details.html?id=${asset.id}" 
+               class="btn btn-info btn-sm">
+               Details
+            </a>
 
-                <button class="btn btn-sm btn-info"
-                onclick="discover(${asset.id})">
-                Discover
-                </button>
+            <button class="btn btn-warning btn-sm"
+            onclick="scanAsset(${asset.id})">
+            Scan
+            </button>
 
-                <button class="btn btn-sm btn-secondary"
-                onclick="view(${asset.id})">
-                View
-                </button>
-
-                <button class="btn btn-sm btn-danger"
-                onclick="removeAsset(${asset.id})">
-                Delete
-                </button>
+            <button class="btn btn-danger btn-sm"
+            onclick="deleteAsset(${asset.id})">
+            Delete
+            </button>
 
             </td>
 
-        </tr>
-        `;
-    });
+            </tr>
+            `;
+        });
+
+    }
+
+    catch (err) {
+
+        console.error("Assets error:", err);
+
+        alert("Cannot fetch assets");
+
+    }
 
 }
 
-    async function addAsset() {
 
+async function addAsset() {
 
     const domain = document.getElementById("domain").value;
     const ip = document.getElementById("ip").value;
 
-    await fetch(`${API}/assets`, {
+    await fetch(`${API_BASE_URL}/assets`, {
+
         method: "POST",
-        headers: authHeader(),
+
+        headers: getHeaders(),
+
         body: JSON.stringify({
-            domain,
+            domain: domain,
             ip_address: ip
         })
+
     });
 
     loadAssets();
+}
 
 
-    }
+async function deleteAsset(id) {
 
-    async function removeAsset(id) {
+    if (!confirm("Delete this asset?")) return;
 
+    await fetch(`${API_BASE_URL}/assets/${id}`, {
 
-    await fetch(`${API}/assets/${id}`, {
         method: "DELETE",
-        headers: authHeader()
+
+        headers: getHeaders()
+
     });
 
     loadAssets();
+}
 
 
-    }
+async function scanAsset(id){
 
-    async function scan(id) {
+    try{
 
-    await fetch(`${API}/assets/${id}/scan`, {
-        method: "POST",
-        headers: authHeader()
-    });
+        alert("Scan started...");
 
-    alert("Scan completed");
+        const res = await fetch(`${API_BASE_URL}/assets/${id}/scan`,{
 
+            method:"POST",
 
-    }
+            headers:getHeaders()
 
-    async function discover(id) {
+        });
 
+        const data = await res.json();
 
-    await fetch(`${API}/discover/${id}`, {
-        method: "POST",
-        headers: authHeader()
-    });
-
-    alert("Subdomain discovery completed");
-
-    loadAssets();
-
+        alert(data.message);
 
     }
 
-    function view(id) {
+    catch(err){
 
-
-    window.location.href = `asset_details.html?id=${id}`;
-
+        alert("Scan failed");
 
     }
 
-    loadAssets();
+}
+
+
+window.onload = loadAssets;
