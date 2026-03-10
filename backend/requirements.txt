@@ -1,4 +1,5 @@
 flask
+flask-cors
 psycopg2-binary
 requests
 python-dotenv
@@ -6,3 +7,4 @@ bcrypt
 PyJWT
 apscheduler
 reportlab
+Flask-Limiter

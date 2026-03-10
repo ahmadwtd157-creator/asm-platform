@@ -1,13 +1,17 @@
 from flask import Flask , request , redirect
+from flask_cors import CORS
 from app.services.db_service import get_db_connection
 from app.api.user_routes import user_bp
 from routes.asset_routes import asset_bp
 from app.api.discovery_routes import discovery_bp
 from routes.dashboard_routes import dashboard_bp
+from app.core.limiter import limiter
 import psycopg2
 import os
 
 app = Flask(__name__)
+CORS(app)
+limiter.init_app(app)
 app.register_blueprint(user_bp, url_prefix="/api")
 app.register_blueprint(asset_bp, url_prefix="/api")
 app.register_blueprint(discovery_bp, url_prefix="/api")
@@ -30,4 +34,5 @@ def db_test():
 
 if __name__=="__main__":
     app.run(host="0.0.0.0", port=5000)
+
 

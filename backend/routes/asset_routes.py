@@ -4,6 +4,8 @@ from app.services.asset_service import create_asset
 from app.services.db_service import get_db_connection
 from app.services.monitoring_service import MonitoringService
 from app.services.reporting_service import ReportingService
+from app.core.limiter import limiter
+
 
 asset_bp = Blueprint("asset", __name__)
 
@@ -182,6 +184,7 @@ def get_asset_results(current_user, user_role, asset_id):
 
 @asset_bp.route("/assets/<int:asset_id>/scan", methods=["POST"])
 @token_required
+@limiter.limit("10 per minute")
 def trigger_scan(current_user, user_role, asset_id):
 
     conn = get_db_connection()
