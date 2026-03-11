@@ -1,67 +1,57 @@
-from app.services.db_service import get_db_connection
+import socket
+
 from app.engines.discovery_engine import run_subfinder
+from app.services.db_service import get_db_connection
 
-def discover_subdomains(asset_id: int, domain: str):
 
-    subdomains = run_subfinder(domain)
+def discover_subdomains(asset_id):
 
     conn = get_db_connection()
     cur = conn.cursor()
 
-    inserted = []
+    # get root domain + user
+    cur.execute("""
+        SELECT domain, user_id
+        FROM assets
+        WHERE id=%s
+    """, (asset_id,))
 
-    # احضار user صاحب الـ asset
-    cur.execute(
-        "SELECT user_id FROM assets WHERE id=%s",
-        (asset_id,)
-    )
+    row = cur.fetchone()
 
-    owner = cur.fetchone()
-
-    if not owner:
+    if not row:
         cur.close()
         conn.close()
-        return []
+        return {"discovered": 0}
 
-    user_id = owner[0]
+    domain = row[0]
+    user_id = row[1]
+
+    # run passive discovery
+    subdomains = run_subfinder(domain)
+
+    discovered = 0
 
     for sub in subdomains:
 
         try:
-
-            # حفظ في جدول subdomains
-            cur.execute(
-                """
-                INSERT INTO subdomains (asset_id, subdomain)
-                VALUES (%s,%s)
-                ON CONFLICT (asset_id, subdomain) DO NOTHING
-                RETURNING id
-                """,
-                (asset_id, sub)
-            )
-
-            result = cur.fetchone()
-
-            if result:
-                inserted.append(sub)
-
-                # تحويله الى asset جديد
-                cur.execute(
-                    """
-                    INSERT INTO assets (user_id, domain)
-                    VALUES (%s,%s)
-                    ON CONFLICT DO NOTHING
-                    """,
-                    (user_id, sub)
-                )
-
+            ip = socket.gethostbyname(sub)
         except Exception:
-            continue
+            ip = None
+
+        cur.execute("""
+            INSERT INTO assets (domain, ip_address, user_id)
+            SELECT %s,%s,%s
+            WHERE NOT EXISTS (
+                SELECT 1 FROM assets WHERE domain=%s
+            )
+        """, (sub, ip, user_id, sub))
+
+        if cur.rowcount > 0:
+            discovered += 1
 
     conn.commit()
 
     cur.close()
     conn.close()
 
-    return inserted
-
+    return {"discovered": discovered}

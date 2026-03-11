@@ -30,3 +30,34 @@ loadDashboard();
 setInterval(loadDashboard,5000);
 
 }
+
+
+function downloadReport(){
+
+fetch(`${API_BASE_URL}/report/executive`,{
+
+headers:getHeaders()
+
+})
+
+.then(res=>res.blob())
+
+.then(blob=>{
+
+const url = window.URL.createObjectURL(blob);
+
+const a = document.createElement("a");
+
+a.href = url;
+
+a.download = "Executive_Report.pdf";
+
+document.body.appendChild(a);
+
+a.click();
+
+a.remove();
+
+});
+
+}

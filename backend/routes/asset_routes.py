@@ -6,13 +6,13 @@ from app.services.monitoring_service import MonitoringService
 from app.services.reporting_service import ReportingService
 from app.core.limiter import limiter
 
-
 asset_bp = Blueprint("asset", __name__)
 
 
 @asset_bp.route("/assets", methods=["POST"])
 @token_required
 def add_asset(current_user, user_role):
+
     data = request.get_json()
 
     if not data:
@@ -32,6 +32,7 @@ def add_asset(current_user, user_role):
 @asset_bp.route("/assets", methods=["GET"])
 @token_required
 def get_assets(current_user, user_role):
+
     conn = get_db_connection()
     cur = conn.cursor()
 
@@ -48,6 +49,7 @@ def get_assets(current_user, user_role):
     conn.close()
 
     assets = []
+
     for row in rows:
         assets.append({
             "id": row[0],
@@ -59,60 +61,6 @@ def get_assets(current_user, user_role):
     return jsonify(assets), 200
 
 
-@asset_bp.route("/assets/<int:asset_id>", methods=["GET"])
-@token_required
-def get_asset(current_user, user_role, asset_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT id, domain, ip_address, created_at
-        FROM assets
-        WHERE id=%s AND user_id=%s
-    """, (asset_id, current_user))
-
-    row = cur.fetchone()
-
-    cur.close()
-    conn.close()
-
-    if not row:
-        return jsonify({"message": "Asset not found"}), 404
-
-    return jsonify({
-        "id": row[0],
-        "domain": row[1],
-        "ip_address": row[2],
-        "created_at": row[3]
-    }), 200
-
-
-@asset_bp.route("/assets/<int:asset_id>", methods=["DELETE"])
-@token_required
-def delete_asset(current_user, user_role, asset_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        DELETE FROM assets
-        WHERE id=%s AND user_id=%s
-        RETURNING id
-    """, (asset_id, current_user))
-
-    deleted = cur.fetchone()
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    if not deleted:
-        return jsonify({"message": "Asset not found"}), 404
-
-    return jsonify({"message": "Asset deleted"}), 200
-
-# -----------------------------
-# FIXED RESULTS ENDPOINT
-# -----------------------------
 @asset_bp.route("/assets/<int:asset_id>/results", methods=["GET"])
 @token_required
 def get_asset_results(current_user, user_role, asset_id):
@@ -120,7 +68,6 @@ def get_asset_results(current_user, user_role, asset_id):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # تحقق من ملكية الـ asset
     cur.execute("""
         SELECT id FROM assets
         WHERE id=%s AND user_id=%s
@@ -133,7 +80,6 @@ def get_asset_results(current_user, user_role, asset_id):
         conn.close()
         return jsonify({"message": "Asset not found"}), 404
 
-    # احضار اخر scan فقط
     cur.execute("""
         SELECT id, risk_score, created_at
         FROM scans
@@ -153,9 +99,8 @@ def get_asset_results(current_user, user_role, asset_id):
     risk_score = scan[1]
     scan_date = scan[2]
 
-    # احضار المنافذ المفتوحة فقط
     cur.execute("""
-        SELECT port, service, banner
+        SELECT port, service, banner, asset_type, category, criticality
         FROM scan_results
         WHERE scan_id=%s AND is_open=TRUE
         ORDER BY port
@@ -173,7 +118,9 @@ def get_asset_results(current_user, user_role, asset_id):
             "port": row[0],
             "service": row[1],
             "banner": row[2],
-            "is_open": True,
+            "asset_type": row[3],
+            "category": row[4],
+            "criticality": row[5],
             "risk_score": risk_score,
             "scan_date": scan_date
         })
@@ -190,9 +137,9 @@ def trigger_scan(current_user, user_role, asset_id):
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT ip_address
-        FROM assets
-        WHERE id=%s AND user_id=%s
+    SELECT ip_address
+    FROM assets
+    WHERE id=%s AND user_id=%s
     """, (asset_id, current_user))
 
     row = cur.fetchone()
@@ -203,6 +150,15 @@ def trigger_scan(current_user, user_role, asset_id):
         return jsonify({"message": "Asset not found"}), 404
 
     ip_address = row[0]
+
+    if not ip_address:
+
+        cur.close()
+        conn.close()
+
+        return jsonify({
+            "message": "Asset has no IP. Run discovery or resolve DNS first."
+        }), 400
 
     MonitoringService.scan_and_compare(asset_id, ip_address, conn)
 

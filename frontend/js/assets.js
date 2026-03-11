@@ -30,16 +30,21 @@ async function loadAssets() {
 
             <td>${asset.ip_address || ""}</td>
 
-            <td>
+           <td>
 
             <a href="asset_details.html?id=${asset.id}" 
-               class="btn btn-info btn-sm">
-               Details
+            class="btn btn-info btn-sm">
+            Details
             </a>
 
             <button class="btn btn-warning btn-sm"
             onclick="scanAsset(${asset.id})">
             Scan
+            </button>
+
+            <button class="btn btn-primary btn-sm"
+            onclick="discoverAsset(${asset.id})">
+            Discover
             </button>
 
             <button class="btn btn-danger btn-sm"
@@ -48,7 +53,6 @@ async function loadAssets() {
             </button>
 
             </td>
-
             </tr>
             `;
         });
@@ -126,6 +130,34 @@ async function scanAsset(id){
         showToast("Error", "Scan failed", "danger");
 
     }
+
+}
+
+async function discoverAsset(id){
+
+try{
+
+showToast("Discovery","Starting subdomain discovery...","info");
+
+const res = await fetch(`${API_BASE_URL}/discover/${id}`,{
+method:"POST",
+headers:getHeaders()
+});
+
+const data = await res.json();
+
+showToast("Discovery Completed",
+`Found ${data.discovered} new subdomains`,
+"success");
+
+loadAssets();
+
+}
+catch(err){
+
+showToast("Error","Discovery failed","danger");
+
+}
 
 }
 
