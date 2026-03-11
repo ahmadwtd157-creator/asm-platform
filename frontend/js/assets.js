@@ -108,25 +108,22 @@ async function scanAsset(id){
 
     try{
 
-        alert("Scan started...");
+        showToast("Scan", "Scan started...", "info");
 
         const res = await fetch(`${API_BASE_URL}/assets/${id}/scan`,{
-
             method:"POST",
-
             headers:getHeaders()
-
         });
 
         const data = await res.json();
 
-        alert(data.message);
+        showToast("Scan Completed", data.message, "success");
 
     }
 
     catch(err){
 
-        alert("Scan failed");
+        showToast("Error", "Scan failed", "danger");
 
     }
 
