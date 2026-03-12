@@ -1,3 +1,13 @@
+
+<img width="1882" height="849" alt="Screenshot_20260312_220820" src="https://github.com/user-attachments/assets/81701c76-36c8-48b1-9a04-9e314ebf834d" />
+<img width="1910" height="609" alt="Screenshot_20260312_051331" src="https://github.com/user-attachments/assets/51d99def-9e59-46f3-8350-206f8122c5b8" />
+<img width="1905" height="426" alt="Screenshot_20260312_052609" src="https://github.com/user-attachments/assets/3b70f511-e6fb-4464-94b6-8c6ce86e7a0e" />
+<img width="1035" height="656" alt="Screenshot_20260312_161257" src="https://github.com/user-attachments/assets/446b76ff-45dd-4324-83ec-30d1a31f35d9" />
+<img width="1327" height="810" alt="Screenshot_20260312_155940" src="https://github.com/user-attachments/assets/087984bf-207c-4607-b018-9b735940089b" />
+<img width="1035" height="656" alt="Screenshot_20260312_161257" src="https://github.com/user-attachments/assets/f817b767-b2b4-40b1-9490-bd7abaf0fa77" />
+<img width="784" height="804" alt="Screenshot_20260312_220124" src="https://github.com/user-attachments/assets/8fcbd1e2-3db7-47a9-8395-43eda1fd3358" />
+
+
 Attack Surface Management Platform (ASM)
 A lightweight Attack Surface Management (ASM) platform built with Flask, PostgreSQL, Docker, and Nmap that enables organizations to discover, monitor, and assess their exposed digital assets.
 The platform automatically discovers subdomains, scans exposed ports, classifies services, calculates risk scores, and generates executive security reports.
