@@ -9,7 +9,7 @@
 
 
 Attack Surface Management Platform (ASM)
-A lightweight Attack Surface Management (ASM) platform built with Flask, PostgreSQL, Docker, and Nmap that enables organizations to discover, monitor, and assess their exposed digital assets.
+A lightweight Attack Surface Management (ASM) platform built with Flask, PostgreSQL, Docker, Subfinder, and Nmap that enables organizations to discover, monitor, and assess their exposed digital assets.
 The platform automatically discovers subdomains, scans exposed ports, classifies services, calculates risk scores, and generates executive security reports.
 
 Features
@@ -42,28 +42,6 @@ Generate executive-level reports containing:
     • Risk distribution
     • Exposure changes
 
-Architecture
-                +------------------+
-                |   Frontend UI    |
-                |  (AdminLTE)      |
-                +--------+---------+
-                         |
-                         |
-                    REST API
-                         |
-+------------------------+------------------------+
-|                        Backend                  |
-|                    Flask API                    |
-|                                                 |
-|  Subdomain Discovery   Port Scanning            |
-|  (Subfinder)           (Nmap)                   |
-|                                                 |
-|  Risk Scoring          Asset Classification     |
-|                                                 |
-+------------------------+------------------------+
-                         |
-                         |
-                    PostgreSQL
 
 Tech Stack
 Backend
@@ -124,9 +102,6 @@ Frontend  → http://localhost:3000
 Backend   → http://localhost:5000
 Postgres  → internal container
 
-http://localhost:3000/dashboard.html
-http://localhost:3000/assets.html
-
 API Endpoints
 Authentication
 POST /api/register
@@ -153,17 +128,17 @@ Security Features
     • Role based access control
 
 Example Workflow
-1- Register user
-2- Add asset
+1️⃣ Register user
+2️⃣ Add asset
 example.com
-3- Discover subdomains
+3️⃣ Discover subdomains
 api.example.com
 dev.example.com
 mail.example.com
-4- Run scan
+4️⃣ Run scan
 Open ports detected
-5- Platform calculates risk score
-6- Generate executive report
+5️⃣ Platform calculates risk score
+6️⃣ Generate executive report
 
 Future Improvements
     • CVE vulnerability detection
@@ -177,4 +152,4 @@ License
 This project is for educational and research purposes.
 
 Author
-ADMIRAL
+ADMIRAL  
