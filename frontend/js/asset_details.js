@@ -10,11 +10,17 @@ return params.get("id");
 
 function riskBadge(level){
 
+if(!level) return "secondary";
+
+level = level.toLowerCase();
+
 if(level === "high") return "danger";
 
 if(level === "medium") return "warning";
 
-return "success";
+if(level === "low") return "success";
+
+return "secondary";
 
 }
 

@@ -91,22 +91,42 @@ async function addAsset() {
     loadAssets();
 }
 
+async function deleteAsset(id){
 
-async function deleteAsset(id) {
+if(!confirm("Delete this asset?")) return;
 
-    if (!confirm("Delete this asset?")) return;
+try{
 
-    await fetch(`${API_BASE_URL}/assets/${id}`, {
+const res = await fetch(`${API_BASE_URL}/assets/${id}`,{
+method:"DELETE",
+headers:getHeaders()
+});
 
-        method: "DELETE",
+if(!res.ok){
 
-        headers: getHeaders()
+const text = await res.text();
+console.error("Delete error:",text);
 
-    });
+showToast("Error","Delete failed","danger");
+return;
 
-    loadAssets();
 }
 
+const data = await res.json();
+
+showToast("Success",data.message,"success");
+
+loadAssets();
+
+}catch(err){
+
+console.error("Network error:",err);
+
+showToast("Error","Network error","danger");
+
+}
+
+}
 
 async function scanAsset(id){
 

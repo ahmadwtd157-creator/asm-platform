@@ -13,7 +13,11 @@ def discover(current_user, user_role, asset_id):
     cur = conn.cursor()
 
     cur.execute(
-        "SELECT domain FROM assets WHERE id=%s AND user_id=%s;",
+        """
+        SELECT domain 
+        FROM assets 
+        WHERE id=%s AND user_id=%s
+        """,
         (asset_id, current_user)
     )
 
@@ -35,14 +39,15 @@ def discover(current_user, user_role, asset_id):
         }), 400
 
     try:
-        new_subdomains = discover_subdomains(asset_id, domain)
+
+        result = discover_subdomains(asset_id)
 
         return jsonify({
-            "discovered": len(new_subdomains),
-            "new_subdomains": new_subdomains
+            "discovered": result.get("discovered", 0)
         }), 200
 
     except Exception as e:
+
         return jsonify({
             "message": "Discovery failed",
             "error": str(e)

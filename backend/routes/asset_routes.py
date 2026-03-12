@@ -182,3 +182,65 @@ def executive_report(current_user, user_role):
         download_name="Executive_Report.pdf",
         mimetype="application/pdf"
     )
+
+@asset_bp.route("/assets/<int:asset_id>", methods=["DELETE"])
+@token_required
+def delete_asset(current_user, user_role, asset_id):
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    try:
+
+        # تأكد أن الأصل يخص المستخدم
+        cur.execute("""
+            SELECT id FROM assets
+            WHERE id=%s AND user_id=%s
+        """,(asset_id,current_user))
+
+        asset = cur.fetchone()
+
+        if not asset:
+
+            cur.close()
+            conn.close()
+
+            return jsonify({"message":"Asset not found"}),404
+
+
+        # حذف النتائج المرتبطة أولاً (منع مشاكل FK)
+        cur.execute("""
+            DELETE FROM scan_results
+            WHERE scan_id IN (
+                SELECT id FROM scans WHERE asset_id=%s
+            )
+        """,(asset_id,))
+
+
+        cur.execute("""
+            DELETE FROM scans
+            WHERE asset_id=%s
+        """,(asset_id,))
+
+
+        # حذف الأصل
+        cur.execute("""
+            DELETE FROM assets
+            WHERE id=%s AND user_id=%s
+        """,(asset_id,current_user))
+
+
+        conn.commit()
+
+        return jsonify({"message":"Asset deleted"}),200
+
+    except Exception as e:
+
+        conn.rollback()
+
+        return jsonify({"message":str(e)}),500
+
+    finally:
+
+        cur.close()
+        conn.close()
