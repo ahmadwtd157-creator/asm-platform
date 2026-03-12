@@ -36,12 +36,15 @@ def get_assets(current_user, user_role):
     conn = get_db_connection()
     cur = conn.cursor()
 
+    # Debug للتأكد من user id
+    print("CURRENT USER ID:", current_user)
+
     cur.execute("""
         SELECT id, domain, ip_address, created_at
         FROM assets
-        WHERE user_id=%s
+        WHERE user_id = %s
         ORDER BY created_at DESC
-    """, (current_user,))
+    """, (int(current_user),))
 
     rows = cur.fetchall()
 
@@ -55,11 +58,10 @@ def get_assets(current_user, user_role):
             "id": row[0],
             "domain": row[1],
             "ip_address": row[2],
-            "created_at": row[3]
+            "created_at": str(row[3])
         })
 
     return jsonify(assets), 200
-
 
 @asset_bp.route("/assets/<int:asset_id>/results", methods=["GET"])
 @token_required

@@ -18,7 +18,7 @@ class AssetClassifier:
         "apache": ("Web Server", "Application", "Low"),
         "nginx": ("Web Server", "Application", "Low"),
         "iis": ("Web Server", "Application", "Low"),
-        "openssh": ("SSH Server", "Infrastructure"),
+        "openssh": ("SSH Server", "Infrastructure", "Medium"),
         "mysql": ("Database", "Database", "High"),
         "postgres": ("Database","Database", "High"),
         "redis": ("Cache", "Cache", "High"),

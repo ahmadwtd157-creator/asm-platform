@@ -1,71 +1,92 @@
 requireAuth();
 
-async function loadAssets() {
+async function loadAssets(){
 
-    try {
+try{
 
-        const res = await fetch(`${API_BASE_URL}/assets`, {
-            headers: getHeaders()
-        });
+const res = await fetch(`${API_BASE_URL}/assets`,{
+headers:getHeaders()
+});
 
-        const data = await res.json();
+if(res.status === 401){
 
-        const table = document.getElementById("assetsTable");
+showToast("Session expired","Please login again","danger");
 
-        if (!table) {
-            console.error("assetsTable element not found");
-            return;
-        }
+localStorage.removeItem("token");
 
-        table.innerHTML = "";
+setTimeout(()=>{
+window.location.href="login.html";
+},1500);
 
-        data.forEach(asset => {
+return;
+}
 
-            table.innerHTML += `
-            <tr>
+const data = await res.json();
 
-            <td>${asset.id}</td>
+if(!Array.isArray(data)){
 
-            <td>${asset.domain || ""}</td>
+console.error("Unexpected response:",data);
 
-            <td>${asset.ip_address || ""}</td>
+showToast("Error","Invalid API response","danger");
 
-           <td>
+return;
+}
 
-            <a href="asset_details.html?id=${asset.id}" 
-            class="btn btn-info btn-sm">
-            Details
-            </a>
+const table = document.getElementById("assetsTable");
 
-            <button class="btn btn-warning btn-sm"
-            onclick="scanAsset(${asset.id})">
-            Scan
-            </button>
+if(!table){
+console.error("assetsTable not found");
+return;
+}
 
-            <button class="btn btn-primary btn-sm"
-            onclick="discoverAsset(${asset.id})">
-            Discover
-            </button>
+table.innerHTML = "";
 
-            <button class="btn btn-danger btn-sm"
-            onclick="deleteAsset(${asset.id})">
-            Delete
-            </button>
+data.forEach(asset => {
 
-            </td>
-            </tr>
-            `;
-        });
+table.innerHTML += `
+<tr>
 
-    }
+<td>${asset.id}</td>
 
-    catch (err) {
+<td>${asset.domain || ""}</td>
 
-        console.error("Assets error:", err);
+<td>${asset.ip_address || ""}</td>
 
-        alert("Cannot fetch assets");
+<td>
 
-    }
+<a href="asset_details.html?id=${asset.id}" 
+class="btn btn-info btn-sm">
+Details
+</a>
+
+<button class="btn btn-warning btn-sm"
+onclick="scanAsset(${asset.id})">
+Scan
+</button>
+
+<button class="btn btn-primary btn-sm"
+onclick="discoverAsset(${asset.id})">
+Discover
+</button>
+
+<button class="btn btn-danger btn-sm"
+onclick="deleteAsset(${asset.id})">
+Delete
+</button>
+
+</td>
+</tr>
+`;
+
+});
+
+}catch(err){
+
+console.error("Assets fetch error:",err);
+
+showToast("Error","Cannot load assets","danger");
+
+}
 
 }
 

@@ -30,7 +30,7 @@ def token_required(f):
                 algorithms=["HS256"]
             )
 
-            current_user = data.get("user_id")
+            current_user = int(data.get("user_id"))
             user_role = data.get("role")
 
         except jwt.ExpiredSignatureError:

@@ -31,10 +31,66 @@ showToast("Error","Server unreachable","danger");
 
 }
 
+async function register(){
+
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+if(!email || !password){
+alert("Email and password required");
+return;
+}
+
+try{
+
+const res = await fetch(`${API_BASE_URL}/register`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+email:email,
+password:password
+})
+
+});
+
+const data = await res.json();
+
+if(res.ok){
+
+alert("Account created successfully");
+
+window.location.href="login.html";
+
+}else{
+
+alert(data.message || "Register failed");
+
+}
+
+}
+
+catch(err){
+
+console.error(err);
+alert("Server error");
+
+}
+
+}
+
 function logout(){
 localStorage.removeItem("token");
 window.location.href="login.html";
 }
+
+window.login = login;
+window.register = register;
+window.logout = logout;
 
 function showToast(title,message,type="info"){
 
