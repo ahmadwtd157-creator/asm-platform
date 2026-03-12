@@ -59,43 +59,15 @@ Infrastructure
     • Docker
     • Docker Compose
 
-Project Structure
-asm-platform
-│
-├── backend
-│   ├── app
-│   │   ├── api
-│   │   ├── core
-│   │   ├── engines
-│   │   ├── models
-│   │   └── services
-│   │
-│   ├── routes
-│   │   ├── asset_routes.py
-│   │   └── dashboard_routes.py
-│   │
-│   ├── main.py
-│   └── Dockerfile
-│
-├── frontend
-│   ├── assets
-│   ├── js
-│   ├── dashboard.html
-│   ├── assets.html
-│   ├── asset_details.html
-│   └── Dockerfile
-│
-├── db
-│   └── init.sql
-│
-├── docker-compose.yml
-└── README.md
+
 
 Installation
 Requirements
     • Docker
     • Docker Compose
 Run the platform
+git clone https://github.com/ahmadwtd157-creator/asm-platform
+cd asm-platform
 docker-compose up --build
 Services will start:
 Frontend  → http://localhost:3000
@@ -140,13 +112,6 @@ Open ports detected
 5️⃣ Platform calculates risk score
 6️⃣ Generate executive report
 
-Future Improvements
-    • CVE vulnerability detection
-    • TLS certificate monitoring
-    • ASN / cloud asset discovery
-    • Attack surface visualization
-    • Email alerting
-    • Risk trend analytics
 
 License
 This project is for educational and research purposes.
